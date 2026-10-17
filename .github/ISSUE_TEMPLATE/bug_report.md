@@ -8,9 +8,13 @@ assignees: ""
 
 **macOS version**
 
+**Mac type**
+- [ ] Apple Silicon (M1 or newer)
+- [ ] Intel
+
 **How did you install Avo?**
-- [ ] install.sh
-- [ ] Xcode
+- [ ] The install command from the README
+- [ ] Built it myself in Xcode
 
 **What happened?**
 
