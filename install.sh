@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
-# Builds Avo from source and installs it to /Applications.
-# Usage: ./install.sh
+# Downloads the latest Avo release and installs it to /Applications.
+# Usage: curl -fsSL https://raw.githubusercontent.com/thakobyan08/avo-the-coach/main/install.sh | bash
+# To install a zip you built yourself: AVO_ZIP=build/Avo.zip ./install.sh
 set -euo pipefail
-
-cd "$(dirname "$0")"
 
 APP_NAME="Avo"
 BUNDLE_ID="com.thakobyan08.avo"
 DEST="/Applications/${APP_NAME}.app"
-LOG="${TMPDIR:-/tmp}/avo-install.log"
-BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/avo-build.XXXXXX")"
-trap 'rm -rf "$BUILD_DIR"' EXIT
+DOWNLOAD_URL="https://github.com/thakobyan08/avo-the-coach/releases/latest/download/${APP_NAME}.zip"
+WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/avo-install.XXXXXX")"
+trap 'rm -rf "$WORK_DIR"' EXIT
 
 step() { printf '\033[1m==>\033[0m %s\n' "$1"; }
 fail() { printf '\033[31mError:\033[0m %s\n' "$1" >&2; exit 1; }
@@ -21,34 +20,22 @@ if [ "$macos_major" -lt 14 ]; then
     fail "Avo needs macOS 14 (Sonoma) or newer. This Mac runs $(sw_vers -productVersion)."
 fi
 
-# 2. Full Xcode, not only the Command Line Tools
-developer_dir="$(xcode-select -p 2>/dev/null || true)"
-if [ -z "$developer_dir" ] || [[ "$developer_dir" == *CommandLineTools* ]]; then
-    if [ -d "/Applications/Xcode.app" ]; then
-        fail "Xcode is installed but not selected. Run this, then try again:
-    sudo xcode-select -s /Applications/Xcode.app/Contents/Developer"
-    else
-        fail "Avo is built with Xcode. Install Xcode from the App Store, open it once, then try again."
-    fi
+# 2. Get the app
+zip="$WORK_DIR/${APP_NAME}.zip"
+if [ -n "${AVO_ZIP:-}" ]; then
+    [ -f "$AVO_ZIP" ] || fail "No file at $AVO_ZIP"
+    cp "$AVO_ZIP" "$zip"
+else
+    step "Downloading ${APP_NAME}…"
+    curl -fsSL --retry 2 -o "$zip" "$DOWNLOAD_URL" \
+        || fail "The download failed. Check your internet connection and try again."
 fi
-if ! xcodebuild -version >/dev/null 2>&1; then
-    fail "Xcode is not ready yet. Open Xcode once and accept the license (or run: sudo xcodebuild -license accept), then try again."
-fi
+ditto -x -k "$zip" "$WORK_DIR" || fail "The download looks damaged. Please try again."
+new_app="$WORK_DIR/${APP_NAME}.app"
+[ -d "$new_app" ] || fail "${APP_NAME}.app was not found in the download."
+codesign --verify --strict "$new_app" 2>/dev/null || fail "${APP_NAME}.app did not pass the signature check."
 
-# 3. Build
-step "Building ${APP_NAME} (this takes a minute)…"
-if ! xcodebuild \
-        -project Avo.xcodeproj \
-        -scheme Avo \
-        -configuration Release \
-        -derivedDataPath "$BUILD_DIR" \
-        build >"$LOG" 2>&1; then
-    fail "The build failed. Details are in: $LOG"
-fi
-built_app="$BUILD_DIR/Build/Products/Release/${APP_NAME}.app"
-[ -d "$built_app" ] || fail "The build finished but ${APP_NAME}.app was not found. Details are in: $LOG"
-
-# 4. Quit the running copy, if any
+# 3. Quit the running copy, if any
 if pgrep -x "$APP_NAME" >/dev/null; then
     step "Quitting the running ${APP_NAME}…"
     osascript -e "tell application id \"${BUNDLE_ID}\" to quit" >/dev/null 2>&1 || true
@@ -59,20 +46,19 @@ if pgrep -x "$APP_NAME" >/dev/null; then
     pkill -x "$APP_NAME" 2>/dev/null || true
 fi
 
-# 5. Install
+# 4. Install
 step "Installing to ${DEST}…"
 if [ -w "/Applications" ] && { [ ! -e "$DEST" ] || [ -w "$DEST" ]; }; then
     rm -rf "$DEST"
-    ditto "$built_app" "$DEST"
+    ditto "$new_app" "$DEST"
 else
     echo "    Your password is needed to write to /Applications."
     sudo rm -rf "$DEST"
-    sudo ditto "$built_app" "$DEST"
+    sudo ditto "$new_app" "$DEST"
 fi
 
-# 6. Launch
+# 5. Launch
 step "Opening ${APP_NAME}…"
 open "$DEST"
 
 printf '\n\033[32mDone!\033[0m Look for the avocado in your menu bar (top right of the screen).\n'
-rm -f "$LOG"

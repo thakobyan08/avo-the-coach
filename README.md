@@ -32,12 +32,12 @@ Every 25 minutes or so of real work, Avo slides in at the top of your screen wit
 Open **Terminal** and paste:
 
 ```sh
-git clone https://github.com/thakobyan08/avo-the-coach.git && cd avo-the-coach && ./install.sh
+curl -fsSL https://raw.githubusercontent.com/thakobyan08/avo-the-coach/main/install.sh | bash
 ```
 
-That's it. The script builds Avo, puts it in your Applications folder and opens it. Look for the avocado in your menu bar. Run it again any time to update.
+That's it. The script downloads the latest Avo, puts it in your Applications folder and opens it. Look for the avocado in your menu bar. Run it again any time to update.
 
-**You need:** macOS 14 (Sonoma) or newer, and [Xcode](https://apps.apple.com/app/xcode/id497799835) installed and opened once. Xcode is Apple's free developer tool; Avo is built from source on your Mac, so macOS doesn't show an "unidentified developer" warning.
+**You need:** macOS 14 (Sonoma) or newer, on an Apple Silicon or Intel Mac. Nothing else.
 
 ## How it works
 
@@ -84,15 +84,15 @@ Avo makes no network calls and has no analytics. To decide when to stay quiet it
 ## FAQ
 
 <details>
-<summary><strong>Why do I need Xcode?</strong></summary>
+<summary><strong>Why install from Terminal instead of a download?</strong></summary>
 <br>
-Avo is installed from source. Xcode is Apple's free tool that turns the source into an app on your Mac.
+Avo isn't notarized through Apple's paid developer program yet, so a download from the browser would be blocked on first launch. The install script fetches the same app from this repo's <a href="https://github.com/thakobyan08/avo-the-coach/releases/latest">Releases</a> and opens it without that extra step. You can <a href="install.sh">read the script</a> before running it.
 </details>
 
 <details>
-<summary><strong>Why is there no download yet?</strong></summary>
+<summary><strong>Can I build it myself?</strong></summary>
 <br>
-A downloadable app has to be signed and notarized through Apple's paid developer program before macOS opens it without warnings. Until then, building from source is the smoothest install.
+Yes. Open <code>Avo.xcodeproj</code> in Xcode and press Run. See <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>.
 </details>
 
 <details>

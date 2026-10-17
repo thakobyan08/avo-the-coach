@@ -14,4 +14,4 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Exercise rotation: no repeats of the last 2, and Walkabout at least every 3rd.
 - Daily count, goal and streak, stored locally.
 - Settings: General, Schedule, Moves and Timing, with pop-up menus of plain-language presets, plus launch at login.
-- One-command `install.sh`.
+- One-line install: `install.sh` downloads the universal app (Apple Silicon and Intel), with no Xcode needed.
