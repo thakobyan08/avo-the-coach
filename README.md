@@ -3,10 +3,10 @@
   <h1>Avo</h1>
   <p><strong>A cheerful avocado coach in your Mac menu bar that nudges you to stretch while you work.</strong></p>
 
-  <a href="https://github.com/thakobyan08/avo/releases/latest"><img src="https://img.shields.io/github/v/release/thakobyan08/avo?style=flat-square&label=release&color=5B8C32" alt="Latest release"></a>
+  <a href="https://github.com/thakobyan08/avo-the-coach/releases/latest"><img src="https://img.shields.io/github/v/release/thakobyan08/avo-the-coach?style=flat-square&label=release&color=5B8C32" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-E4573D?style=flat-square" alt="macOS 14 or newer">
   <img src="https://img.shields.io/badge/Swift-SwiftUI-F05138?style=flat-square" alt="Swift and SwiftUI">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/thakobyan08/avo?style=flat-square&color=7DB04A" alt="MIT license"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/thakobyan08/avo-the-coach?style=flat-square&color=7DB04A" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/data-stays%20on%20your%20Mac-22201C?style=flat-square" alt="No network, no analytics">
 
   <br><br>
@@ -32,7 +32,7 @@ Every 25 minutes or so of real work, Avo slides in at the top of your screen wit
 Open **Terminal** and paste:
 
 ```sh
-git clone https://github.com/thakobyan08/avo.git && cd avo && ./install.sh
+git clone https://github.com/thakobyan08/avo-the-coach.git && cd avo-the-coach && ./install.sh
 ```
 
 That's it. The script builds Avo, puts it in your Applications folder and opens it. Look for the avocado in your menu bar. Run it again any time to update.
